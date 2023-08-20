@@ -1,5 +1,5 @@
 name: excel_to_arb_generator
-description: A sample command-line application.
+description: A Dart package that allows you to download an Excel file from a given URL and generate ARB (Application Resource Bundle) files.
 version: 1.0.0
 # repository: https://github.com/my_org/my_repo
 
