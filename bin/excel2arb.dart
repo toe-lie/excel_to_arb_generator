@@ -1,7 +1,7 @@
 import 'package:excel2arb/excel2arb.dart';
 
 void main(List<String> arguments) async {
-  final usage = 'Usage: dart excel_to_arb_generator:execute <url_to_excel_file> <sheet_name> <path_to_output_directory>';
+  final usage = 'Usage: excel2arb <url_to_excel_file> <sheet_name> <path_to_output_directory>';
   if (arguments.isEmpty) {
     print(usage);
     return;
