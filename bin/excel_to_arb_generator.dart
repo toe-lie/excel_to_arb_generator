@@ -1,16 +1,22 @@
-import 'package:excel_to_arb_generator/excel_to_arb_generator.dart';
+import 'package:excel2arb/excel2arb.dart';
 
 void main(List<String> arguments) async {
-  if (arguments.length != 4) {
-    print(
-        'Usage: dart bin/excel_to_arb_generator.dart <url_to_excel_file> <sheet_name> <path_to_save_temp_excel_file> <path_to_output_directory>');
+  final usage = 'Usage: dart excel_to_arb_generator:execute <url_to_excel_file> <sheet_name> <path_to_output_directory>';
+  if (arguments.isEmpty) {
+    print(usage);
     return;
   }
 
-  final excelUrl = arguments[0];
-  final sheetName = arguments[1];
-  final filePath = arguments[2];
-  final outputDirectory = arguments[3];
+  final excelUrl = arguments.firstOrNull ?? '';
+  if (excelUrl.isEmpty) {
+    print('Excel file url is missing!');
+    print(usage);
+    return;
+  }
+
+  final sheetName = arguments.elementAtOrNull(1) ?? 'Localization';
+  final filePath = arguments.elementAtOrNull(2) ?? 'temp.xlsx';
+  final outputDirectory = arguments.elementAtOrNull(3) ?? '.';
 
   final converter = ExcelToArbGenerator(
     excelUrl,

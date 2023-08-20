@@ -1,11 +1,10 @@
-name: excel_to_arb_generator
+name: excel2arb
 description: A Dart package that allows you to download an Excel file from a given URL and generate ARB (Application Resource Bundle) files.
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
+repository: https://github.com/toe-lie/excel_to_arb_generator
 
-scripts:
-  build_runner_build: dart run build_runner build --delete-conflicting-outputs
-  add_package: dart pub add
+executables:
+  execute: excel_to_arb_generator
 
 environment:
   sdk: ^3.0.1
@@ -15,12 +14,8 @@ dependencies:
   equatable: ^2.0.5
   excel: ^2.1.0
   http: ^1.1.0
-  json_annotation: ^4.8.1
   path: ^1.8.3
-  # path: ^1.8.0
 
 dev_dependencies:
-  build_runner: ^2.4.6
-  json_serializable: ^6.7.1
   lints: ^2.0.0
   test: ^1.24.6

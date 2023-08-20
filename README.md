@@ -14,12 +14,12 @@ dependencies:
 ## Usage
 You can use this package to download an Excel file from a URL and generate ARB files. Here's an example of how to use it in a Dart script:
 ```dart
-import 'package:excel_to_arb_generator/excel_to_arb_generator.dart';
+import 'package:excel_to_arb_generator/excel2arb.dart';
 
 void main(List<String> arguments) async {
   if (arguments.length != 4) {
     print(
-        'Usage: dart bin/excel_to_arb_generator.dart <url_to_excel_file> <sheet_name> <path_to_save_temp_excel_file> <path_to_output_directory>');
+        'Usage: dart bin/excel2arb.dart <url_to_excel_file> <sheet_name> <path_to_save_temp_excel_file> <path_to_output_directory>');
     return;
   }
 

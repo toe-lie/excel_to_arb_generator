@@ -1,6 +1,6 @@
 import 'package:excel/excel.dart';
-import 'package:excel_to_arb_generator/src/excel_parser.dart';
-import 'package:excel_to_arb_generator/src/models/translation.dart';
+import 'package:excel2arb/src/excel_parser.dart';
+import 'package:excel2arb/src/models/translation.dart';
 import 'package:test/test.dart';
 
 void main() {
