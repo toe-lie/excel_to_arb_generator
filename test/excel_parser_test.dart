@@ -7,17 +7,6 @@ void main() {
   late Excel excel;
   late Sheet sheet;
   late ExcelParser parser;
-  const header = [
-    'Feature',
-    'Screen',
-    'Name [name]',
-    'Description [description]',
-    'Remark',
-    'English {en}',
-    'Myanmar {my}',
-    'Thai {th}',
-    'Placeholders [placeholders]'
-  ];
 
   setUp(() {
     excel = Excel.createExcel();
