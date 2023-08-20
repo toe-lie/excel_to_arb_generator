@@ -12,7 +12,12 @@ const argGenerateL10n = 'gen-l10n';
 void main(List<String> arguments) async {
   exitCode = 0; // presume success
   final usage =
-      'Usage: excel2arb -u <excel-file-url> -s <sheet_name_to_parse> -o <path_to_arb_output_directory> -g <generate_l10n>';
+      'Usage: excel2arb -u <excel-file-url> -s <sheet_name_to_parse> -o <path_to_arb_output_directory> -g <generate_l10n>\n'
+      '-u, --excel-ur\tExcel file url (https://example.com/sample.xlsx)\n'
+      '-s, --sheet-name\tSheet name to parse (default: Localization)\n'
+      '-o, --output-directory\tPath to arb files output directory (default: current directory)\n'
+      '-g, --gen-l10n\tGenerate l10n files (default: false)\n';
+
   if (arguments.isEmpty) {
     print(usage);
     exitCode = 1;
