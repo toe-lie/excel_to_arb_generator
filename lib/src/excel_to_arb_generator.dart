@@ -23,10 +23,10 @@ class ExcelToArbGenerator {
     try {
       final file = File(tempExcelPath);
       final fileName = file.path.split(Platform.pathSeparator).last;
-      print('Downloading $fileName from $excelFileUrl...');
+      print('Downloading excel file from $excelFileUrl...');
       final downloader = ExcelDownloader(url: excelFileUrl);
       await downloader.downloadAndCreateExcelFile(file);
-      print('Downloaded $fileName!');
+      print('Excel file is downloaded!');
 
       final bytes = await file.readAsBytes();
       var excel = Excel.decodeBytes(bytes);

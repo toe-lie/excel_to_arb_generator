@@ -1,7 +1,7 @@
 import 'package:excel2arb/excel2arb.dart';
 
 void main(List<String> arguments) async {
-  final usage = 'Usage: excel2arb <url_to_excel_file> <sheet_name> <path_to_output_directory>';
+  final usage = 'Usage: excel2arb <url_to_excel_file> <sheet_name_to_parse> <path_to_output_directory>';
   if (arguments.isEmpty) {
     print(usage);
     return;
@@ -15,12 +15,11 @@ void main(List<String> arguments) async {
   }
 
   final sheetName = arguments.elementAtOrNull(1) ?? 'Localization';
-  final filePath = arguments.elementAtOrNull(2) ?? 'temp.xlsx';
-  final outputDirectory = arguments.elementAtOrNull(3) ?? '.';
+  final outputDirectory = arguments.elementAtOrNull(2) ?? '.';
 
   final converter = ExcelToArbGenerator(
     excelUrl,
-    tempExcelPath: filePath,
+    tempExcelPath: 'temp.xlsx',
     outputArbDirectory: outputDirectory,
     sheetName: sheetName,
   );
