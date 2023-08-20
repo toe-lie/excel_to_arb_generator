@@ -4,7 +4,7 @@ version: 1.0.0
 repository: https://github.com/toe-lie/excel_to_arb_generator
 
 executables:
-  execute: excel_to_arb_generator
+  execute:
 
 environment:
   sdk: ^3.0.1
