@@ -51,11 +51,11 @@ The supported Excel sheet format should have the following columns in the first 
 
 Make sure to provide the necessary information in these columns for localization.
 
-You can check the sample Excel sheet [here](https://shorturl.at/aP146).
+You can download and check the sample Excel sheet [here](https://shorturl.at/aP146).
 
 ## Features
 - Download Excel files from URLs
 - Generate ARB files for localization
 
 ## Contributing
-Contributions are welcome! Feel free to open issues or pull requests on the GitHub repository.
+Contributions are welcome! Feel free to open issues or pull requests on the [GitHub repository](https://github.com/toe-lie/excel_to_arb_generator).
