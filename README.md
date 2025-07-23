@@ -1,61 +1,144 @@
-# Excel to ARB Generator
+# 📝 **Excel to ARB Generator**
 
-A Dart package that enables you to convert Excel files into ARB (Application Resource Bundle) files for localization.
+Tired of manually converting translation spreadsheets into `.arb` files for your Flutter or Dart projects? This command-line tool automates the process, letting you manage your localization in a simple Excel file—and generates all the necessary Application Resource Bundle (`.arb`) files instantly.
 
-## Installation
+---
 
-To activate the package, run the following command:
+## 🚀 How It Works
+
+You provide a link to a specially formatted Excel file, and the tool generates the corresponding `.arb` files for each language, ready to be used in your application.
+
+```
+Excel File → excel2arb Tool → Generated .arb Files
+```
+
+---
+
+## 🔧 Prerequisites
+
+Make sure you have the [Dart SDK](https://dart.dev/get-dart) installed.
+
+---
+
+## 📦 Installation
+
+Activate the package globally:
 
 ```bash
 dart pub global activate excel2arb
 ```
 
-## Usage
-Once the package is activated, you can use the `excel2arb` command to convert Excel files to ARB files. Here's how:
+This makes the `excel2arb` command available globally in your terminal.
+
+---
+
+## 📁 Step 1: Format Your Excel Sheet
+
+Create an Excel sheet following these key formatting rules. You can see a full example [here](https://shorturl.at/aP146).
+
+### ✅ Key Formatting Rules
+
+| Column | Description |
+|--------|-------------|
+| `Name [name]` | **Required.** Used as the JSON key in `.arb` files. |
+| `Language {locale}` | **Required.** Columns with language names and 2-letter locale in `{}`. E.g., `English {en}` |
+| `Remark` | Optional. Notes or instructions for translators. |
+| `Placeholders [placeholders]` | Optional. JSON object defining placeholders and their types. |
+
+### 🧾 Example Excel Layout
+
+| Name `[name]` | Description `[description]` | Remark | English `{en}` | Myanmar `{my}` | Placeholders `[placeholders]` |
+|---------------|-----------------------------|--------|------------------|------------------|-------------------------------|
+| `greeting` | A welcome message |  | Hello, World! | မင်္ဂလာပါ လောကကြီး | |
+| `welcomeUser` | Welcomes a specific user | Keep `{}` as-is | Hello `{userName}` | မင်္ဂလာပါ `{userName}` | `{"userName": {"type": "String"}}` |
+
+---
+
+## ⚙️ Step 2: Run the Generator
+
+Once your Excel file is published and accessible via URL, run:
+
+### ▶️ Basic Usage
+
 ```bash
-excel2arb -u <excel-file-url> -s <sheet-name-to-parse> -o <path-to-arb-output-directory> -g <generate-l10n>
-```
->[You can directly run a script from an activated package from the command line. If you are unable to run the script directly, you can also use `dart pub global run`.](https://dart.dev/tools/pub/cmd/pub-global#running-a-script)
-```bash
-dart pub global run excel2arb -u <excel-file-url> -s <sheet-name-to-parse> -o <path-to-arb-output-directory> -g <generate-l10n>
+excel2arb --excel-url <your-excel-file-url> --output-directory <path-to-output-folder>
 ```
 
-- -u, --excel-url :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The URL of the Excel file to convert (e.g., https://example.com/sample.xlsx)
-- -s, --sheet-name :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The name of the sheet to parse (default: Localization)
-- -o, --output-directory :&nbsp;&nbsp;&nbsp;&nbsp;The path to the directory where the ARB files will be generated (default: current directory)
-- -g, --gen-l10n :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Generate l10n files (default: false)
+If the script isn't found, try:
 
-## Example
+```bash
+dart pub global run excel2arb --excel-url <your-excel-file-url> --output-directory <path-to-output-folder>
+```
+
+---
+
+### 🧰 Command-Line Options
+
+| Flag | Alias | Description | Default |
+|------|-------|-------------|---------|
+| `--excel-url` | `-u` | **(Required)** Public URL of the Excel file | |
+| `--sheet-name` | `-s` | Sheet name to parse | `Localization` |
+| `--output-directory` | `-o` | Directory to save `.arb` files | Current directory |
+| `--gen-l10n` | `-g` | Also generate `l10n.yaml` config | `false` |
+
+---
+
+### 💡 Full Example
+
 ```bash
 excel2arb -u https://example.com/sample.xlsx -s Localization -o output_dir -g true
 ```
 
-## Excel Sheet Format
-The supported Excel sheet format should have the following columns in the first row:
+---
 
-- `Feature` (Optional)
-- `Screen` (Optional)
-- `Name [name]`
-- `Description [description]`
-- `Remark` (Optional)
-- Add localization columns using the local code in curly brackets,<br/>e.g., `English {en}`, `Myanmar {my}`, `Thai {th}`
-- `Placeholders [placeholders]` in `Json format` (Optional)
+## 💡 Bonus Tip #1: Using Google Sheets
 
-Make sure to use square brackets like `[name]` for keys and curly brackets like `{en}` for locale identifiers in your Excel sheet.
+You can use Google Sheets instead of Excel:
 
-You can download and check the sample Excel sheet [here](https://shorturl.at/aP146).
+1. Create your spreadsheet in **Google Sheets** (follow the same format).
+2. Go to **File → Share → Publish to web**.
+3. Under the **Link** tab, select the specific sheet.
+4. Change format to **Microsoft Excel (.xlsx)**.
+5. Click **Publish**.
+6. Copy the generated link and use it with `--excel-url`.
 
-| Name [name]     | Description [description] | Remark                    | English {en}                   | Myanmar {my}        | Thai {th} | Placeholders [placeholders]                                                                                                                                                           |
-|-----------------|---------------------------|---------------------------|--------------------------------|---------------------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| onboardingTitle | Onboarding Title          | new line in some language | Select language<br>to continue | ဘာသာစကားရွေးချယ်ပါ  | เลือกภาษา |                                                                                                                                                                                       |
-| signinTitle     |                           |                           | Sign In                        | ဝင်ရောက်ရန်         |           |                                                                                                                                                                                       |
-| formattedDepth  | Formatted depth value     |                           | Depth {value} {unit}           | အနက် {value} {unit} |           | {<br> "value": {<br> "type": "double",<br> "format": "decimalPattern",<br> "optionalParameters": {<br> "decimalDigits": 2<br> }<br> },<br> "unit": {<br> "type": "String"<br> }<br> } |
+✅ This gives you a **live Excel download link**, so your team can collaborate in real-time—just run the generator when you're ready.
 
-## Features
-- Download Excel files from URLs
-- Generate ARB files for localization
-- Supports custom sheet names
-- Generates l10n files
+---
 
-## Contributing
-Contributions are welcome! Feel free to open issues or pull requests on the [GitHub repository](https://github.com/toe-lie/excel_to_arb_generator).
+## 💡 Bonus Tip #2: Streamline with an IDE Plugin
+
+If you're using Android Studio or any JetBrains IDE, streamline the sync using the [Dart Scripts Runner](https://plugins.jetbrains.com/plugin/18726-dart-scripts-runner) plugin.
+
+### 🛠 Setup
+
+1. Install **Dart Scripts Runner** from JetBrains Marketplace.
+2. In `pubspec.yaml`, add:
+
+```yaml
+scripts:
+  sync_localization:
+    script: excel2arb -u https://shorturl.at/abcd -o lib/l10n/locales -g true
+    description: Sync localization from google sheet
+```
+
+3. Replace the URL with your actual spreadsheet link.
+4. Now, you can run `sync_localization` directly from the **Dart Scripts** tool window in your IDE—just one click!
+
+![Dart Scripts Configuration](https://toelie.sgp1.digitaloceanspaces.com/public/pubspec-script-example.png)
+
+---
+
+## ✨ Features
+
+- ✅ Downloads Excel files directly from a URL  
+- ✅ Generates `.arb` files for all languages  
+- ✅ Supports custom sheet names  
+- ✅ Optionally generates `l10n.yaml`  
+- ✅ Handles placeholders and their types
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to open an issue or submit a PR on the [GitHub repo](https://github.com/toe-lie/excel_to_arb_generator).
