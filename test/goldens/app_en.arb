@@ -1,0 +1,1 @@
+{"welcome":"Welcome","greeting":"Hello, {name}!","@greeting":{"placeholders":{"name":{"type":"String"}}},"farewell":"Goodbye","thank_you":"Thank you!"}

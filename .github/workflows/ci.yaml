@@ -1,0 +1,141 @@
+name: Dart CI (Git Flow)
+
+on:
+  push:
+    branches:
+      - develop
+      - 'feature/**'
+      - 'release/**'
+      - 'hotfix/**'
+      - main
+    tags:
+      - v*
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+  pull_request:
+    branches:
+      - develop
+      - main
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test / ${{ matrix.os }} / Dart ${{ matrix.dart }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        dart: [stable]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: ${{ matrix.dart }}
+
+      - name: Cache pub
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - run: dart --version
+      - run: dart pub get
+      - name: Format check
+        run: dart format --output=none --set-exit-if-changed .
+      - name: Analyze
+        run: dart analyze --fatal-infos
+      - name: Run tests
+        run: dart test --chain-stack-traces
+      - name: Upload tmp_output_test on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tmp_output_test-${{ matrix.os }}
+          path: tmp_output_test/
+          if-no-files-found: ignore
+
+      - name: Verify pubspec version & CHANGELOG.md has entry
+        if: startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/hotfix/')
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! -f pubspec.yaml ]]; then echo "pubspec.yaml not found"; exit 1; fi
+          if [[ ! -f CHANGELOG.md ]]; then echo "CHANGELOG.md not found"; exit 1; fi
+          VERSION=$(grep -E '^version:' pubspec.yaml | sed -E 's/version:\s*//')
+          if [[ -z "$VERSION" ]]; then echo "Version not found in pubspec.yaml"; exit 1; fi
+          echo "pubspec version: $VERSION"
+          # Ensure CHANGELOG has a heading for this version (supports: ## 1.2.3, ## v1.2.3, ## [1.2.3])
+          if ! grep -Eq "^##(\\s*\\[)?v?$VERSION(\\])?" CHANGELOG.md; then
+            echo "CHANGELOG.md is missing a heading for version $VERSION (expected '## $VERSION' or '## v$VERSION' or '## [$VERSION]')";
+            exit 1;
+          fi
+          # Optional safety: ensure we are not reusing an existing tag
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [[ -n "$LATEST_TAG" && "$LATEST_TAG" == "v$VERSION" ]]; then
+            echo "Version $VERSION already tagged ($LATEST_TAG). Bump version in pubspec.yaml.";
+            exit 1;
+          fi
+          echo "CHANGELOG has entry for $VERSION"
+      # Only on release/* and hotfix/* branches: run a publish dry-run to catch pub issues early
+      - name: Pub publish dry-run (pre-release/hotfix)
+        if: success() && (startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/hotfix/'))
+        run: dart pub publish --dry-run
+
+  # On version tags, do a proper publish (guarded by a secret).
+  publish-on-tag:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Cache pub
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+      - run: dart pub get
+      - name: Pub publish
+        env:
+          PUB_CREDENTIALS: ${{ secrets.PUB_CREDENTIALS }}
+        run: |
+          if [ -z "${PUB_CREDENTIALS}" ]; then
+            echo "PUB_CREDENTIALS not set; doing dry-run instead."
+            dart pub publish --dry-run
+          else
+            mkdir -p ~/.pub-cache
+            echo "${PUB_CREDENTIALS}" > ~/.pub-cache/credentials.json
+            dart pub publish -f
+          fi

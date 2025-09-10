@@ -1,0 +1,16 @@
+excel2arb — Excel → ARB generator
+
+Usage:
+  dart run bin/excel2arb.dart -u <url-or-path> -s <sheet> -o <outdir> [options]
+
+Options:
+  -u <url-or-path>   URL (http/https) or local file path to Excel (.xlsx)
+  -s <name>          Worksheet name containing localization rows (e.g., "Localization")
+  -o <dir>           Output directory for generated ARB files
+  -g                 Run `flutter gen-l10n` after generating ARB (requires Flutter project with `flutter: generate: true`)
+  -h, --help         Show this help
+
+Notes:
+  • The tool expects columns like: "Name [name]", "Language {en}", "Language {my}", "Placeholders [placeholders]".
+  • If your current version only accepts URLs for -u, you can serve local fixtures via localhost during tests.
+
