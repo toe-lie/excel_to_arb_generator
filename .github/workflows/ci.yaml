@@ -83,7 +83,7 @@ jobs:
           set -euo pipefail
           if [[ ! -f pubspec.yaml ]]; then echo "pubspec.yaml not found"; exit 1; fi
           if [[ ! -f CHANGELOG.md ]]; then echo "CHANGELOG.md not found"; exit 1; fi
-          VERSION=$(grep -E '^version:' pubspec.yaml | sed -E 's/version:\s*//')
+          VERSION=$(grep -E '^version:' pubspec.yaml | sed -E 's/version:\s*//' | xargs)
           if [[ -z "$VERSION" ]]; then echo "Version not found in pubspec.yaml"; exit 1; fi
           echo "pubspec version: $VERSION"
           # Ensure CHANGELOG has a heading for this version (supports: ## 1.2.3, ## v1.2.3, ## [1.2.3])
