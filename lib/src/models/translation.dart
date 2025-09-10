@@ -14,5 +14,6 @@ class Translation extends Equatable {
   final String placeholders;
 
   @override
-  List<Object> get props => [valuesByLanguageCode, key, description, placeholders];
+  List<Object> get props =>
+      [valuesByLanguageCode, key, description, placeholders];
 }

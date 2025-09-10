@@ -96,7 +96,7 @@ void main() {
         'Myanmar {my}',
         'Thai {th}',
         'Lao {lo}'
-        'Placeholders [placeholders]'
+            'Placeholders [placeholders]'
       ];
       final row1 = [
         'Signin',
@@ -110,18 +110,7 @@ void main() {
         '',
         ''
       ];
-      final nullEmptyRow = [
-        '',
-        null,
-        '',
-        null,
-        '',
-        '',
-        '',
-        null,
-        '',
-        ''
-      ];
+      final nullEmptyRow = ['', null, '', null, '', '', '', null, '', ''];
       final translations = [
         Translation(
           key: 'signinTitle',
