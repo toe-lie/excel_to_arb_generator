@@ -2,7 +2,7 @@ import 'package:excel/excel.dart';
 
 import 'models/translation.dart';
 
-class ExcelParser  {
+class ExcelParser {
   static const String keyName = "name";
   static const String keyDescription = "description";
   static const String keyPlaceholders = "placeholders";
@@ -47,7 +47,8 @@ class ExcelParser  {
     return translations;
   }
 
-  bool isEmptyRow(List<Data?> row) => row.every((data) => data?.value == null || data?.value?.toString().isEmpty == true);
+  bool isEmptyRow(List<Data?> row) => row.every(
+      (data) => data?.value == null || data?.value?.toString().isEmpty == true);
 
   String extractValue(
       String key, Map<String, int> indicesByName, List<Data?> row) {
