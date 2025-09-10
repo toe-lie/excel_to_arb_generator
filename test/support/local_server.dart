@@ -39,13 +39,16 @@ class LocalPythonHttpServer {
     _process = null;
 
     try {
+      // Try graceful shutdown first
       process.kill(ProcessSignal.sigint);
       final exitCode = await process.exitCode
-          .timeout(Duration(seconds: 5), onTimeout: () => -1);
+          .timeout(Duration(seconds: 3), onTimeout: () => -1);
+
       if (exitCode == -1) {
+        // Force kill if graceful shutdown failed
         process.kill(ProcessSignal.sigterm);
         await process.exitCode
-            .timeout(Duration(seconds: 5), onTimeout: () => -1);
+            .timeout(Duration(seconds: 2), onTimeout: () => -1);
       }
     } catch (_) {
       // Ignore errors during stopping

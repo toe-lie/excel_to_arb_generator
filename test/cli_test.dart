@@ -72,6 +72,10 @@ void main() {
       'dart',
       ['run', 'bin/excel2arb.dart', ...args],
       workingDirectory: projectRoot,
+    ).timeout(
+      Duration(seconds: 25),
+      onTimeout: () =>
+          ProcessResult(0, 254, '', 'Test timed out after 25 seconds'),
     );
   }
 

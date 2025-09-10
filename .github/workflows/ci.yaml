@@ -67,7 +67,7 @@ jobs:
       - name: Analyze
         run: dart analyze --fatal-infos
       - name: Run tests
-        run: dart test --chain-stack-traces
+        run: dart test --chain-stack-traces --timeout=20s
       - name: Upload tmp_output_test on failure
         if: failure()
         uses: actions/upload-artifact@v4
