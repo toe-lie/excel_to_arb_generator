@@ -10,6 +10,12 @@ class ArbCreator {
 
   Future<void> writeToFile(String directory, List<String> languageCodes,
       List<Translation> translations) async {
+    // Create output directory if it doesn't exist
+    final outputDir = Directory(directory);
+    if (!outputDir.existsSync()) {
+      outputDir.createSync(recursive: true);
+    }
+
     for (final languageCode in languageCodes) {
       final file = File(join(directory, 'app_$languageCode.arb'));
       final data = <String, dynamic>{};
