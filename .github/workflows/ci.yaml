@@ -146,8 +146,16 @@ jobs:
               echo "Credentials file exists and has content"
               echo "File size: $(wc -c < ~/.pub-cache/credentials.json) bytes"
               echo "First 100 chars: $(head -c 100 ~/.pub-cache/credentials.json)"
-              echo "Attempting to publish..."
-              dart pub publish -f
+              echo "Attempting to publish with credentials..."
+              # Extract access token from credentials and use PUB_TOKEN
+              ACCESS_TOKEN=$(echo "${PUB_CREDENTIALS}" | grep -o '"accessToken":"[^"]*"' | cut -d'"' -f4)
+              if [ -n "${ACCESS_TOKEN}" ]; then
+                echo "Using access token for authentication"
+                PUB_TOKEN="${ACCESS_TOKEN}" dart pub publish -f
+              else
+                echo "Could not extract access token, trying direct publish"
+                dart pub publish -f
+              fi
             else
               echo "Failed to create credentials file or file is empty"
               echo "File exists: $([ -f ~/.pub-cache/credentials.json ] && echo 'yes' || echo 'no')"
