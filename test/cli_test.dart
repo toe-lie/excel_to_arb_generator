@@ -118,6 +118,33 @@ void main() {
     expect(secondRun, firstRun);
   });
 
+  test('creates output directory if it does not exist', () async {
+    final nonExistentDir =
+        Directory(p.join(projectRoot, 'tmp_output_nonexistent'));
+    if (nonExistentDir.existsSync()) {
+      nonExistentDir.deleteSync(recursive: true);
+    }
+
+    final excelUrl = serverUri.resolve('test/fixtures/basic.xlsx').toString();
+    final result = await runCli(
+        ['-u', excelUrl, '-s', 'Localization', '-o', nonExistentDir.path]);
+
+    expect(result.exitCode, 0,
+        reason:
+            'CLI should succeed when output directory does not exist: ${result.stderr}');
+    expect(nonExistentDir.existsSync(), isTrue,
+        reason: 'Output directory should be created');
+
+    final outputFiles = await readDirFiles(nonExistentDir);
+    expect(outputFiles.keys, isNotEmpty,
+        reason: 'ARB files should be generated in created directory');
+
+    // Cleanup
+    if (nonExistentDir.existsSync()) {
+      nonExistentDir.deleteSync(recursive: true);
+    }
+  });
+
   test('--help output matches golden snapshot', () async {
     final result = await runCli(['--help']);
     expect([0, 2].contains(result.exitCode), isTrue,
