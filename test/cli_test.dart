@@ -4,6 +4,37 @@ import 'package:test/test.dart';
 
 import 'support/local_server.dart';
 
+/// Normalizes help output for reliable comparison:
+/// - Converts Windows line endings to Unix
+/// - Converts Windows line endings to Unix
+/// - Replaces common mojibake and Unicode punctuation with ASCII equivalents
+/// - Trims trailing whitespace from each line
+String normalizeHelp(String s) {
+  // Normalize line endings
+  s = s.replaceAll('\r\n', '\n');
+
+  // Fix common mojibake from UTF-8 -> CP1252 misinterpretation on Windows
+  s = s
+      .replaceAll('â€”', '-') // em dash mojibake
+      .replaceAll('â€“', '-') // en dash mojibake
+      .replaceAll('â†’', '->') // right arrow mojibake
+      .replaceAll('â€¢', '*'); // bullet mojibake
+
+  // Replace fancy Unicode punctuation with ASCII for cross-platform stability
+  const map = {
+    '—': '-', '–': '-',
+    '→': '->',
+    '•': '*', '·': '*',
+    '‘': "'", '’': "'",
+    '“': '"', '”': '"',
+    '\u00A0': ' ', // non-breaking space
+  };
+  map.forEach((k, v) => s = s.replaceAll(k, v));
+
+  // Trim trailing whitespace at end to avoid EOF newline mismatches
+  return s.trimRight();
+}
+
 void main() {
   late LocalPythonHttpServer server;
   late Uri serverUri;
@@ -96,8 +127,8 @@ void main() {
         'Run: dart run bin/excel2arb.dart --help > test/goldens/help.txt');
     final helpGolden =
         File(p.join(goldensDir.path, 'help.txt')).readAsStringSync();
-    final normalizedStdout = result.stdout.replaceAll('\r\n', '\n');
-    final normalizedGolden = helpGolden.replaceAll('\r\n', '\n');
+    final normalizedStdout = normalizeHelp(result.stdout.toString());
+    final normalizedGolden = normalizeHelp(helpGolden);
     expect(normalizedStdout, normalizedGolden);
   });
 }
