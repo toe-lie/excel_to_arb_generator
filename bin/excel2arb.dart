@@ -9,7 +9,30 @@ const argLocalizationSheetName = 'sheet-name';
 const argOutputDirectory = 'output-directory';
 const argGenerateL10n = 'gen-l10n';
 
-void main(List<String> arguments) async {
+String _excel2arbUsageText() => '''
+excel2arb — Excel → ARB generator
+
+Usage:
+  dart run bin/excel2arb.dart -u <url-or-path> -s <sheet> -o <outdir> [options]
+
+Options:
+  -u <url-or-path>   URL (http/https) or local file path to Excel (.xlsx)
+  -s <name>          Worksheet name containing localization rows (e.g., "Localization")
+  -o <dir>           Output directory for generated ARB files
+  -g                 Run `flutter gen-l10n` after generating ARB (requires Flutter project with `flutter: generate: true`)
+  -h, --help         Show this help
+
+Notes:
+  • The tool expects columns like: "Name [name]", "Language {en}", "Language {my}", "Placeholders [placeholders]".
+  • If your current version only accepts URLs for -u, you can serve local fixtures via localhost during tests.
+''';
+
+void main(List<String> args) async {
+  if (args.contains('--help') || args.contains('-h')) {
+    stdout.writeln(_excel2arbUsageText());
+    return;
+  }
+
   exitCode = 0; // presume success
   final usage =
       'Usage: excel2arb -u <excel-file-url> -s <sheet_name_to_parse> -o <path_to_arb_output_directory> -g <generate_l10n>\n'
@@ -18,7 +41,7 @@ void main(List<String> arguments) async {
       '-o, --output-directory\t\tPath to arb files output directory (default: current directory)\n'
       '-g, --gen-l10n\t\t\tGenerate l10n files (default: false)\n';
 
-  if (arguments.isEmpty) {
+  if (args.isEmpty) {
     print(usage);
     exitCode = 1;
     return;
@@ -51,7 +74,7 @@ void main(List<String> arguments) async {
         negatable: false,
       );
 
-    final argResults = argParser.parse(arguments);
+    final argResults = argParser.parse(args);
     final excelUrl = argResults[argExcelUrl] ?? '';
     if (excelUrl.isEmpty) {
       print('Excel file url is missing!');

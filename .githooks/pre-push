@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "▶ dart test (pre-push)…"
+dart test --chain-stack-traces -r compact

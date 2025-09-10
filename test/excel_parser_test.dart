@@ -3,6 +3,9 @@ import 'package:excel2arb/src/excel_parser.dart';
 import 'package:excel2arb/src/models/translation.dart';
 import 'package:test/test.dart';
 
+List<CellValue?> _cells(List<String?> row) =>
+    row.map<CellValue?>((v) => v == null ? null : TextCellValue(v)).toList();
+
 void main() {
   late Excel excel;
   late Sheet sheet;
@@ -96,7 +99,7 @@ void main() {
         'Myanmar {my}',
         'Thai {th}',
         'Lao {lo}'
-        'Placeholders [placeholders]'
+            'Placeholders [placeholders]'
       ];
       final row1 = [
         'Signin',
@@ -110,7 +113,7 @@ void main() {
         '',
         ''
       ];
-      final nullEmptyRow = [
+      final nullEmptyRow = <String?>[
         '',
         null,
         '',
@@ -134,9 +137,9 @@ void main() {
           },
         ),
       ];
-      sheet.appendRow(header);
-      sheet.appendRow(nullEmptyRow);
-      sheet.appendRow(row1);
+      sheet.appendRow(_cells(header));
+      sheet.appendRow(_cells(nullEmptyRow));
+      sheet.appendRow(_cells(row1));
 
       ExcelParser parser = ExcelParser(sheet: sheet);
       List<dynamic> result = parser.parse();
@@ -147,8 +150,8 @@ void main() {
     test('returns cells correctly', () {
       final header = ['Header0', 'Header1', 'Header2'];
       final row1 = ['Row1Col0', 'Row1Col1', 'Row1Col2'];
-      sheet.appendRow(header);
-      sheet.appendRow(row1);
+      sheet.appendRow(_cells(header));
+      sheet.appendRow(_cells(row1));
 
       ExcelParser parser = ExcelParser(sheet: sheet);
       final resultHeaderRow = parser.parseRow(sheet, 0);
@@ -161,8 +164,8 @@ void main() {
     test('return header cells correctly', () {
       final header = ['Header0', 'Header1', 'Header2'];
       final row1 = ['Row1Col0', 'Row1Col1', 'Row1Col2'];
-      sheet.appendRow(header);
-      sheet.appendRow(row1);
+      sheet.appendRow(_cells(header));
+      sheet.appendRow(_cells(row1));
 
       ExcelParser parser = ExcelParser(sheet: sheet);
       final resultHeaderRow = parser.parseHeader(sheet);
@@ -174,9 +177,10 @@ void main() {
       final row0 = ['Row0Col0', 'Row0Col0', 'Row0Col0'];
       final row1 = ['Row1Col0', 'Row1Col1', 'Row1Col2'];
       final row2 = ['Row2Col0', 'Row2Col1', 'Row2Col2'];
-      sheet.appendRow(row0);
-      sheet.appendRow(row1);
-      sheet.appendRow(row2);
+      sheet.appendRow(_cells(row0));
+      sheet.appendRow(_cells(row1));
+      sheet.appendRow(_cells(row2));
+
       final result = parseColumn(sheet, 1);
       expect(result, equals(['Row0Col0', 'Row1Col1', 'Row2Col1']));
     });

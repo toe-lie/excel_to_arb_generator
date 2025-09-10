@@ -8,13 +8,22 @@ import 'models/translation.dart';
 class ArbCreator {
   const ArbCreator();
 
-  Future<void> writeToFile(String directory, List<String> languageCodes, List<Translation> translations) async {
+  Future<void> writeToFile(String directory, List<String> languageCodes,
+      List<Translation> translations) async {
+    // Create output directory if it doesn't exist
+    final outputDir = Directory(directory);
+    if (!outputDir.existsSync()) {
+      outputDir.createSync(recursive: true);
+    }
+
     for (final languageCode in languageCodes) {
       final file = File(join(directory, 'app_$languageCode.arb'));
       final data = <String, dynamic>{};
       for (final translation in translations) {
-        data.putIfAbsent(translation.key, () => translation.valuesByLanguageCode[languageCode] ?? '');
-        if (translation.description.isNotEmpty || translation.placeholders.isNotEmpty) {
+        data.putIfAbsent(translation.key,
+            () => translation.valuesByLanguageCode[languageCode] ?? '');
+        if (translation.description.isNotEmpty ||
+            translation.placeholders.isNotEmpty) {
           final extraMap = <String, dynamic>{};
           if (translation.description.isNotEmpty) {
             extraMap.putIfAbsent('description', () => translation.description);
@@ -29,5 +38,4 @@ class ArbCreator {
       file.writeAsString(jsonEncode(data));
     }
   }
-
 }

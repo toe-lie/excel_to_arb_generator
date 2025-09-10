@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Only consider staged Dart files
+STAGED=$(git diff --name-only --cached -- '*.dart' || true)
+if [ -z "$STAGED" ]; then
+  exit 0
+fi
+
+echo "▶ dart format (staged files)…"
+# Format in place and re-add any changes
+dart format $STAGED >/dev/null
+git add $STAGED
+
+echo "▶ dart analyze (fast)…"
+dart analyze --fatal-infos
+
+echo "✓ pre-commit checks passed"
