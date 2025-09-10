@@ -135,7 +135,24 @@ jobs:
             echo "PUB_CREDENTIALS not set; doing dry-run instead."
             dart pub publish --dry-run
           else
+            echo "Setting up pub credentials..."
+            # Create the credentials directory
             mkdir -p ~/.pub-cache
+            # Write credentials to file
             echo "${PUB_CREDENTIALS}" > ~/.pub-cache/credentials.json
-            dart pub publish -f
+            echo "Credentials file created, checking content..."
+            # Verify the file was created and has content
+            if [ -f ~/.pub-cache/credentials.json ] && [ -s ~/.pub-cache/credentials.json ]; then
+              echo "Credentials file exists and has content"
+              echo "File size: $(wc -c < ~/.pub-cache/credentials.json) bytes"
+              echo "First 100 chars: $(head -c 100 ~/.pub-cache/credentials.json)"
+              echo "Attempting to publish..."
+              dart pub publish -f
+            else
+              echo "Failed to create credentials file or file is empty"
+              echo "File exists: $([ -f ~/.pub-cache/credentials.json ] && echo 'yes' || echo 'no')"
+              echo "File size: $(wc -c < ~/.pub-cache/credentials.json 2>/dev/null || echo '0') bytes"
+              echo "Doing dry-run instead."
+              dart pub publish --dry-run
+            fi
           fi
