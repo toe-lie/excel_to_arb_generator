@@ -30,7 +30,8 @@ class ExcelToArbGenerator {
 
       final bytes = await file.readAsBytes();
       var excel = Excel.decodeBytes(bytes);
-      final localizationSheet = excel.tables[sheetName];
+      final sheets = (excel as dynamic).sheets as Map<String, Sheet>?;
+      final localizationSheet = sheets?[sheetName];
       print('Looking for $sheetName sheet...');
       if (localizationSheet == null) {
         print('$sheetName sheet is missing!');
@@ -47,7 +48,8 @@ class ExcelToArbGenerator {
 
       print('Creating ARB files in $outputArbDirectory ...');
       final creator = ArbCreator();
-      creator.writeToFile(outputArbDirectory, languageCodes, translations);
+      await creator.writeToFile(
+          outputArbDirectory, languageCodes, translations);
       print('ARB files are created in $outputArbDirectory!');
 
       print('Deleting $fileName...');
